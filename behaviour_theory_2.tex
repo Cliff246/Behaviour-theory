@@ -1,0 +1,117 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[mathscr]{euscript}
+\usepackage[margin=1in]{geometry}
+
+% --- Macros ---
+\newcommand{\Pcal}{\mathscr{P}}
+\newcommand{\Scal}{\mathscr{S}}
+\newcommand{\Ocal}{\mathscr{O}}
+\newcommand{\Tcal}{\mathscr{T}}
+
+% --- Theorem environments ---
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+
+\begin{document}
+
+\title{Behavior Theory: The Static Collapse Theorem}
+\author{Heath Fortin}
+\date{May 29, 2025}
+\maketitle
+
+\section{Definitions}
+\begin{itemize}
+  \item \textbf{Problem Universe:}  
+    $\displaystyle \Pcal = \{P_1, P_2, \dots\}$.
+  \item \textbf{Solution Space:}  
+    For each $P\in\Pcal$, the valid outputs lie in $\Scal_P\subseteq \Ocal$.
+  \item \textbf{Agent:}  
+    A system with finite memory, $|\omega|\le K<\infty$.
+  \item \textbf{Static System:}  
+    Parameters $\omega$ frozen after deployment.
+\end{itemize}
+
+\section{Core Axioms}
+\begin{enumerate}
+  \item[\textbf{A1.}] \emph{Task-Oblivious Execution.}  
+    The agent processes a fixed input~$x_*$ with no privileged task-identifying information.
+  \item[\textbf{A2.}] \emph{Monolithic Output Requirement.}  
+    The agent must emit a single output $y\in\Ocal$ satisfying \emph{all} tasks:
+    \[
+      y \;\in\; \bigcap_{i=1}^{n}\Scal_{P_i}.
+    \]
+  \item[\textbf{A3.}] \emph{Independent Solution Sets.}  
+    There exists a measure~$\mu$ on~$\Ocal$ and a constant $\rho<1$ such that for each $i$,
+    \[
+      \mu(\Scal_{P_i})\le\rho,
+    \]
+    and the $\Scal_{P_i}$ are $\mu$-independent, giving
+    \[
+      \mu\Bigl(\bigcap_{i=1}^n\Scal_{P_i}\Bigr)
+      \;\le\;
+      \prod_{i=1}^n \mu(\Scal_{P_i})
+      \;\le\;\rho^n.
+    \]
+    \emph{Note:} This applies to solution \emph{sets} $\Scal_{P_i}$, not individual outputs $y$.
+\end{enumerate}
+
+\section{Interpretation Notes}
+\begin{itemize}
+  \item \textbf{Task Information:}  
+    Even if $x$ contains task labels, fixed parameters $\omega$ prevent any runtime reconfiguration.
+  \item \textbf{Monolithic Output:}  
+    The requirement $y\in\bigcap_i\Scal_{P_i}$ illustrates the limitations of static capacity.
+  \item \textbf{Worst-Case Assumption:}  
+    A3 models an exponential “collapse.”  Overlap between sets may slow it down but cannot stop it.
+\end{itemize}
+
+\section{Main Theorem}
+\begin{theorem}[Static Collapse]
+Under A1–A3, any static agent facing $n$ tasks satisfies
+\[
+  \Pr\bigl[y \in \bigcap_{i=1}^n \Scal_{P_i}\bigr] \;\le\; \rho^n,
+\]
+and across the entire class of capacity-$K$ agents,
+\[
+  \Pr\bigl[\exists\ \text{successful agent}\bigr] \;\le\; 2^K\,\rho^n
+  \;\xrightarrow[n\to\infty]{}\;0.
+\]
+\end{theorem}
+\begin{proof}
+The single-agent bound is immediate from A3.  Since there are at most $2^K$ distinct settings of $\omega$, a union bound over all agents gives the class-wide result.
+\end{proof}
+
+\section{Recursive Collapse Corollary}
+\begin{corollary}
+Let $h\colon\mathcal{X}\to\Pcal$ be a static task-classifier with $|\omega_h|\le K_h$, and let $\Tcal_k\subseteq\Pcal$ be valid ID sets.  Then
+\[
+  \Pr\Bigl[h(x_*)\in\bigcap_{k=1}^n\Tcal_k\Bigr]
+  \;\le\;2^{K_h}\,\tau^n
+  \;\xrightarrow[n\to\infty]{}\;0.
+\]
+No static subsystem escapes collapse.
+\end{corollary}
+
+\section{Broader Implications}
+Static systems cannot generalize indefinitely across unbounded tasks.  Even optimistic overlap does not prevent eventual performance degradation without capacity growth.  True generalization requires systems whose internal structure or memory can change post-deployment.
+
+\section{Dynamic Intelligence Principle}
+\begin{itemize}
+  \item \textbf{Escape Hatch:}  
+    Only by increasing $|\omega_t|$ at runtime—e.g.\ via external memory, module synthesis, or on-the-fly architecture changes—can an agent avoid collapse.
+  \item \textbf{Collapse Test:}  
+    \[
+      \text{If }|\omega_t|\uparrow \;\Rightarrow\;\text{Dynamic}\;\Rightarrow\;\text{No collapse};\quad
+      \text{else Static}\;\Rightarrow\;\text{Collapse.}
+    \]
+\end{itemize}
+
+\section*{Edit Notes}
+\begin{enumerate}
+  \item Independence of solution sets avoids the trivial case where tasks are identical.
+  \item Any agent not continuously learning faces an ever-increasing set of indistinguishable solutions.
+  \item The task-oblivious assumption parallels Gödel’s incompleteness: without growth, any static system is bound to “miss” truths.
+\end{enumerate}
+
+\end{document}
